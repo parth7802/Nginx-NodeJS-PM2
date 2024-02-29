@@ -1,0 +1,48 @@
+name: Nginx Load Balancer
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: self-hosted # Specify your GitHub runner here
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Nginx
+      run: sudo apt-get update && sudo apt-get install -y nginx
+
+    - name: Configure Nginx
+      run: |
+        sudo cp nginx.conf /etc/nginx/nginx.conf
+        sudo systemctl restart nginx
+
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install PHP
+      run: sudo apt-get install -y php-fpm
+
+    - name: Start PHP-FPM service
+      run: sudo systemctl start php-fpm
+
+    - name: Deploy Node.js App
+      run: |
+        # Commands to deploy your Node.js application
+        # e.g., npm install && npm run build
+
+    - name: Deploy PHP App
+      run: |
+        # Commands to deploy your PHP application
+        # e.g., composer install
+
+    - name: Finish Deployment
+      run: |
+        # Commands to finalize deployment and set up Nginx configuration for load balancing
+        # Ensure your Nginx configuration includes load balancing rules between Node.js and PHP application
