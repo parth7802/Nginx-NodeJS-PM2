@@ -1,0 +1,104 @@
+Step 1
+update the repository
+
+apt update && apt upgrade
+
+Step 2
+install nginx server
+
+apt install nginx* -y
+
+Step 3
+install firewall on ubutu
+
+apt install ufw* -y
+ufw allow ssh
+
+Step 4
+start nginx server and check status
+
+service nginx.service start
+service nginx.service status
+
+Step 5
+make a directory and set permission
+
+mkdir -p var/www/server.com/html
+chmod -R 755 var/www/server.com
+chown -R $USER:$USER /var/www/example.com/html
+
+Step 6
+make a index.html file for nodejs
+
+nano /var/www/server.com/html/index.html
+	<html> 
+
+     <head> 
+        <title>Welcome to servername.com!</title> 
+    </head> 
+ 
+    <body> 
+        <h1> 
+
+Success! The servername.com server block is working successfully! 
+
+        </h1> 
+        
+ <b>Meow Meow!</b> 
+ 
+    </body> 
+
+ </html>
+
+Step 7
+add in the configration file
+
+sudo nano /etc/nginx/sites-available/servername.com
+
+server { 
+        listen 82; 
+        listen [::]:82; 
+        root /var/www/servername.com/html; 
+        index index.html index.htm index.nginx-debian.html; 
+        #Here, you can put your domain name for ex: www.servername.com 
+        server_name 192.168.0.172; 
+        location / { 
+                try_files $uri $uri/ =404; 
+        } 
+}
+Step 8
+sudo ln -s /etc/nginx/sites-available/server.com /etc/nginx/sites-enabled/
+
+Step 9
+check the syntax of nginx configuration file
+nginx-t
+sudo systemctl restart nginx
+Step 10
+Install nodejs on ubuntu 
+sudo apt install nodejs
+node -v
+Step 11
+Install npm and PM2
+apt install npm
+apt install pm2 -g
+Step 12
+Start your nodejs file with pm2
+pm2 start server app.js
+Step 13
+open server.com for configuring reverse proxy
+sudo nano /etc/nginx/sites-available/server.com
+
+server  
+{ 
+        listen   82; 
+        server_name 192.168.0.172; 
+        location /  
+{ 
+                proxy_set_header X-Real-IP $remote_addr; 
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; 
+                proxy_set_header Host $host; 
+                proxy_set_header X-NginX-Proxy true; 
+                proxy_pass http://localhost:3000/; 
+                proxy_redirect http://localhost:3000/ https://$server_name/; 
+        } 
+}
